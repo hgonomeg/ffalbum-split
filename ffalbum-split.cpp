@@ -86,7 +86,8 @@ public:
         assert(ret.find('/') == std::string::npos);
         if (ret.find_first_of('-') != std::string::npos)
             ret = ret.substr(0, ret.find_first_of('-'));
-        if(ret.back()==' ') ret.pop_back();
+        if (ret.back() == ' ')
+            ret.pop_back();
         return ret;
     }
 };

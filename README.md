@@ -1,9 +1,9 @@
 # ffalbum-split
 
-## Ultra easy command line utility to split whole albums into particular songs using ffmpeg
+### Ultra easy command line utility to split whole albums into particular songs using ffmpeg
 
-## To quote the program's help:
-
+### To quote the program's help message:
+```
 FFALBUM-SPLIT
 
 This is a tool for splitting albums using ffmpeg.
@@ -31,3 +31,4 @@ The album audio file is expected to be named in the following way:
 The individual titles will then be named accordingly to that in the following manner:
 
 <Band name> - <Track title>
+```

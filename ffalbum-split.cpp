@@ -23,11 +23,15 @@ class MusicTrack
     patris(pat),
     title(titel)
     {
-
+        
     }
     void set_end_time(unsigned int et)
     {
         end_time = et;
+    }
+    unsigned int get_begin_time()
+    {
+        return begin_time;
     }
     void ffextract();
 };
@@ -47,6 +51,7 @@ class MusicAlbum
     m_chart(chart)
     {
     parse_from_file();
+    match_end_times();
     }
 
     void ffextract()
@@ -58,19 +63,40 @@ class MusicAlbum
         return m_filename;
     }
 
+    std::string get_extension() const
+    {
+        using namespace boost::filesystem;
+        std::string ret;
+        path alpat(m_filename);
+        ret = alpat.extension().generic_string();
+        return ret;
+    }
+
     std::string get_band_name() const
     {
         using namespace boost::filesystem;
         std::string ret;
         path alpat(m_filename);
-        ret = alpat.filename().generic_string();
+        ret = alpat.stem().generic_string();
         assert(ret.find('\\')==std::string::npos);
         assert(ret.find('/')==std::string::npos);
-        if(ret.find_first_of('-')!=std::string::npos) ret = ret.substr(ret.find_first_of('-'));
+        if(ret.find_first_of('-')!=std::string::npos) ret = ret.substr(0,ret.find_first_of('-'));
         return ret;
     }
 
+    void match_end_times();
+    
 };
+
+void MusicAlbum::match_end_times()
+{
+        unsigned int lbegin_time = 0;
+        for(auto i=track_list.rbegin();i!=track_list.rend();i++)
+        {
+            i->set_end_time(lbegin_time);
+            lbegin_time = i->get_begin_time();
+        }
+    }
 
 void MusicAlbum::parse_from_file()
 {
@@ -129,11 +155,21 @@ void MusicTrack::ffextract()
 {
         std::string ffcommand = "ffmpeg -i ";
         ffcommand.append(std::string("\""+patris.get_filename())+"\"");
-
+        ffcommand.append(" -c:a copy -ss ");
+        ffcommand.append(std::to_string(begin_time));
+        if(end_time!=0)
+        {
+            unsigned int dur_time = end_time-begin_time;
+            ffcommand.append(" -t ");
+            ffcommand.append(std::to_string(dur_time));
+        }
+        ffcommand.push_back(' ');
+        ffcommand.append("\""+patris.get_band_name()+" - "+title+patris.get_extension()+"\"");
         system(ffcommand.c_str());
 }
 
 int main(int argc, char** argv)
 {
     MusicAlbum mus(argv[1],argv[2]);
+    mus.ffextract();
 }

@@ -2,7 +2,9 @@
 
 ### Ultra easy command line utility to split whole albums into particular songs using ffmpeg
 
-The whole program is just one .cpp file. Boost.Filesystem is a dependency.
+The whole program is just one .cpp file. 
+
+**Boost.Filesystem** is a dependency.
 
 ### To quote the program's help message:
 ```
